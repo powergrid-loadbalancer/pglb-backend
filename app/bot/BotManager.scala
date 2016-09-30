@@ -10,7 +10,7 @@ object BotManager {
   def setCapacity(newCapacity: Double): Unit = {
     this.synchronized {
       capacity = newCapacity
-      bots.map(tuple => BuyBot(capacity, tuple._2.consumed))
+      bots.map(tuple => BuyBot(capacity, tuple._2.depleted))
     }
   }
 
@@ -24,7 +24,7 @@ object BotManager {
 
   def changeBehaviour(id: Int, newMax: Int): Unit = {
     this.synchronized {
-      bots = bots.+((id, new BuyBot(newMax, bots.get(id).map(_.consumed).getOrElse(0))))
+      bots = bots.+((id, new BuyBot(newMax, bots.get(id).map(_.depleted).getOrElse(0))))
     }
   }
 

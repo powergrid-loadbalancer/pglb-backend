@@ -2,12 +2,12 @@ package bot
 
 /**
   */
-case class BuyBot(maxAmount: Double, var consumed: Double) {
+case class BuyBot(maxAmount: Double, var depleted: Double) {
   private var recentlyBought = false
 
   def buy(max: Double): Double = {
-    val bought: Double = Math.min(max, (BotManager.capacity-consumed)*((Math.random() + Math.random())/2).toInt)
-    consumed = bought.toInt + consumed
+    val bought: Double = Math.min(max, (BotManager.capacity-depleted)*((Math.random() + Math.random())/2).toInt)
+    depleted = bought.toInt + depleted
     recentlyBought = true
     bought
   }
@@ -16,7 +16,7 @@ case class BuyBot(maxAmount: Double, var consumed: Double) {
     if (recentlyBought) {
       recentlyBought = false
     } else {
-      consumed = Math.min(0, consumed - 0.1)
+      depleted = Math.min(0, depleted - 0.1)
     }
   }
 }
