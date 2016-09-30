@@ -5,18 +5,18 @@ package bot
 object BotManager {
   var bots: Map[Int, BuyBot] = Map()
   var disabled: Map[Int, BuyBot] = Map()
-  var capacity: Int = 0
+  var capacity: Double = 0
 
-  def setCapacity(newCapacity: Int): Unit = {
+  def setCapacity(newCapacity: Double): Unit = {
     this.synchronized {
       capacity = newCapacity
-      bots.map(tuple => BuyBot(capacity))
+      bots.map(tuple => BuyBot(capacity, tuple._2.consumed))
     }
   }
 
   def getBot(id: Int): BuyBot = {
     bots.get(id).orElse(disabled.get(id)).getOrElse[BuyBot]({
-      val bot: BuyBot = new BuyBot(capacity)
+      val bot: BuyBot = new BuyBot(capacity, 0)
       bots = bots.+((id, bot))
       bot
     })
@@ -24,7 +24,7 @@ object BotManager {
 
   def changeBehaviour(id: Int, newMax: Int): Unit = {
     this.synchronized {
-      bots = bots.+((id, new BuyBot(newMax)))
+      bots = bots.+((id, new BuyBot(newMax, bots.get(id).map(_.consumed).getOrElse(0))))
     }
   }
 
@@ -42,5 +42,9 @@ object BotManager {
       bots = bots.+((id, buyBot))
       disabled = disabled - id
     }
+  }
+
+  def tick(): Unit = {
+    bots.foreach(tuple => tuple._2.tick())
   }
 }

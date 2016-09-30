@@ -44,6 +44,7 @@ class ServiceBus(socket: Socket) {
       while (loop) {
             val line: String = bufferedReader.readLine
             handleJson(line)
+            BotManager.tick()
           }
     } catch {
        case _ => {

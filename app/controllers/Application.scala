@@ -50,10 +50,10 @@ class Application extends Controller {
 
   def setCapacity() = Action { request =>
     val body: AnyContent = request.body
-    val bodyIntOpt: Option[Int] = body.asJson
+    val bodyIntOpt: Option[Double] = body.asJson
       .flatMap(json => {
         json match {
-          case nmbr: JsNumber => Some(nmbr.value.toInt)
+          case nmbr: JsNumber => Some(nmbr.value.toDouble)
           case other => None
         }
       })
