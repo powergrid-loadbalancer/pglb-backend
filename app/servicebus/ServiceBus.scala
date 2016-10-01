@@ -129,7 +129,8 @@ class ServiceBus(socket: Socket) {
           .foldRight(0.0)((tuple, akk) => {
             akk + tuple.value.get("Value").get.asInstanceOf[JsString].value.replace(",", ".").toDouble
           })
-        var diff = maxProd - (totalConsume * 2300)
+        var diff = maxProd - (totalConsume * 1072)
+        println(s"Diff ${diff}, maxProd: $maxProd, maxCons $totalConsume")
         if (diff <= 0) {
           buffer.toList.map(tuple => {
             val (key, value) = tuple

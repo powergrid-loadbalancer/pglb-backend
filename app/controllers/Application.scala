@@ -17,8 +17,15 @@ class Application extends Controller {
     case Right(bus) => bus.runnable.start();Some(bus)
   }
 
+  def setHeader(response: Result): Result = {
+    response.withHeaders(
+      ACCESS_CONTROL_ALLOW_ORIGIN -> "*"
+    )
+  }
+
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    val ok: Result = Ok(views.html.index("Your new application is ready."))
+    setHeader(ok)
   }
 
   def recieve = Action {
@@ -41,27 +48,39 @@ class Application extends Controller {
     } else {
       handleNoBus()
     }
-    Ok(head)
+    val ok: Result = Ok(head)
+    setHeader(ok)
   }
 
   def getCapacity = Action {
-    Ok(BotManager.capacity)
+    val ok: Result = Ok(JsNumber(BotManager.capacity))
+    setHeader(ok)
   }
 
   def setCapacity() = Action { request =>
     val body: AnyContent = request.body
-    val bodyIntOpt: Option[Double] = body.asJson
-      .flatMap(json => {
-        json match {
-          case nmbr: JsNumber => Some(nmbr.value.toDouble)
-          case other => None
-        }
-      })
-    if (bodyIntOpt.isDefined) {
+    val bodyIntOpt: Option[Double] = body.asText
+      .map(text => text.toDouble)
+//    val bodyIntOpt: Option[Double] = body.asJson
+//      .flatMap(json => {
+//        json match {
+//          case nmbr: JsNumber => Some(nmbr.value.toDouble)
+//          case other => None
+//        }
+//      })
+    val response = if (bodyIntOpt.isDefined) {
       BotManager.setCapacity(bodyIntOpt.get)
       Ok
     } else {
       BadRequest
     }
+    setHeader(response)
+  }
+
+  def getHack(value: Int) = Action {
+    val newCapacity: Double = value / 1000.0
+    BotManager.setCapacity(newCapacity)
+    val ok: Result = Ok(JsNumber(newCapacity))
+    setHeader(ok)
   }
 }

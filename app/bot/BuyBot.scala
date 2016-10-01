@@ -6,7 +6,8 @@ case class BuyBot(maxAmount: Double, var depleted: Double, var totalBought: Doub
   private var recentlyBought = false
 
   def buy(max: Double): Double = {
-    val bought: Double = Math.min(max, (BotManager.capacity-depleted)*((Math.random() + Math.random())/2).toInt)
+    val bought: Double = Math.min(max, (BotManager.capacity)*((Math.random() + Math.random())/2).toInt)
+    //val bought: Double = Math.min(max, (BotManager.capacity-depleted)*((Math.random() + Math.random())/2).toInt)
     totalBought += bought + totalBought
     depleted = bought.toInt + depleted
     recentlyBought = true
